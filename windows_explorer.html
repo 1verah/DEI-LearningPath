@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador de Archivos</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0078d4;
+            --primary-hover: #106ebe;
+            --secondary-color: #f8f9fa;
+            --accent-color: #0066cc;
+            --text-primary: #323130;
+            --text-secondary: #605e5c;
+            --border-color: #e1dfdd;
+            --hover-bg: #f3f2f1;
+            --selected-bg: #deecf9;
+            --sidebar-bg: #faf9f8;
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --card-shadow-hover: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--secondary-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .explorer {
+            display: flex;
+            height: 100vh;
+            background: #fff;
+            box-shadow: var(--card-shadow);
+            border-radius: 12px;
+            margin: 8px;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--gradient-bg);
+            opacity: 0.1;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: var(--gradient-bg);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-header::before {
+            content: '🏢';
+            font-size: 24px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+
+        .toolbar {
+            background: linear-gradient(to right, #f8f9fa, #fff);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .path-bar {
+            flex: 1;
+            padding: 10px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: #fff;
+            font-size: 14px;
+            font-family: 'Inter', monospace;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .path-bar:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            position: relative;
+        }
+
+        .content-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            pointer-events: none;
+        }
+
+        .folder {
+            margin-bottom: 4px;
+        }
+
+        .folder-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin: 2px 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .folder-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .folder-header:hover::before {
+            left: 100%;
+        }
+
+        .folder-header:hover {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .folder-header.selected {
+            background: var(--gradient-bg);
+            color: white;
+            transform: translateX(8px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .folder-icon {
+            margin-right: 12px;
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .folder-header:hover .folder-icon {
+            transform: scale(1.1);
+        }
+
+        .folder-name {
+            font-size: 14px;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .folder-children {
+            margin-left: 24px;
+            display: none;
+            border-left: 2px solid var(--border-color);
+            padding-left: 8px;
+        }
+
+        .folder.expanded .folder-children {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .file-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-bg);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .file-item:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: var(--card-shadow-hover);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .file-item:hover::before {
+            opacity: 0.1;
+        }
+
+        .file-item.selected {
+            background: var(--selected-bg);
+            border-color: var(--primary-color);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,120,212,0.2);
+        }
+
+        .file-item.dragging {
+            opacity: 0.7;
+            transform: rotate(8deg) scale(0.95);
+            z-index: 1000;
+        }
+
+        .file-icon {
+            font-size: 56px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .file-item:hover .file-icon {
+            transform: scale(1.1) rotateY(10deg);
+            text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .file-name {
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            word-break: break-word;
+            max-width: 120px;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .file-name.editing {
+            background: #fff;
+            border: 2px solid var(--primary-color);
+            padding: 4px 8px;
+            border-radius: 6px;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
+        }
+
+        .context-menu {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            z-index: 2000;
+            display: none;
+            min-width: 180px;
+            overflow: hidden;
+        }
+
+        .context-menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .context-menu-item:hover {
+            background: var(--gradient-bg);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .context-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .drop-zone {
+            border: 3px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 60px 40px;
+            text-align: center;
+            color: var(--text-secondary);
+            margin: 20px 0;
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone::before {
+            content: '☁️';
+            font-size: 48px;
+            display: block;
+            margin-bottom: 16px;
+            opacity: 0.7;
+        }
+
+        .drop-zone.dragover {
+            border-color: var(--primary-color);
+            background: rgba(0,120,212,0.1);
+            color: var(--primary-color);
+            transform: scale(1.02);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .drop-zone.dragover::before {
+            animation: bounce 0.6s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .breadcrumb-item {
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item:hover {
+            background: var(--gradient-bg);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            background: var(--gradient-bg);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-bg);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Animaciones adicionales */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .file-item {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .file-item:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+        .file-item:nth-child(3n) {
+            animation-delay: 0.2s;
+        }
+
+        /* Efectos de cristal */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .explorer {
+                flex-direction: column;
+                margin: 4px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 200px;
+            }
+            
+            .file-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="explorer">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                Explorador de Archivos
+            </div>
+            <div class="folder expanded">
+                <div class="folder-header selected" data-path="C:\Users\pmardones001\Desktop\Mío">
+                    <span class="folder-icon">🏛️</span>
+                    <span class="folder-name">Gobierno</span>
+                </div>
+                <div class="folder-children" id="folderTree">
+                    <!-- Aquí se generará el árbol de carpetas dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="toolbar">
+                <button class="btn" onclick="createNewFolder()">
+                    📁 Nueva Carpeta
+                </button>
+                <button class="btn" onclick="uploadFiles()">
+                    📤 Subir Archivos
+                </button>
+                <input type="text" class="path-bar" id="pathBar" readonly>
+            </div>
+
+            <div class="content-area">
+                <div class="breadcrumb" id="breadcrumb"></div>
+                
+                <div class="drop-zone" id="dropZone">
+                    <div>Arrastra archivos aquí para subirlos</div>
+                    <small style="opacity: 0.7; margin-top: 8px; display: block;">Formatos soportados: PDF, DOC, XLS, PNG, JPG</small>
+                </div>
+
+                <div class="file-grid" id="fileGrid">
+                    <!-- Aquí se mostrarán los archivos y carpetas -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menú contextual -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="renameItem()">
+            <span>✏️</span> Renombrar
+        </div>
+        <div class="context-menu-item" onclick="deleteItem()">
+            <span>🗑️</span> Eliminar
+        </div>
+        <div class="context-menu-item" onclick="copyItem()">
+            <span>📋</span> Copiar
+        </div>
+        <div class="context-menu-item" onclick="cutItem()">
+            <span>✂️</span> Cortar
+        </div>
+        <div class="context-menu-item" onclick="showProperties()">
+            <span>ℹ️</span> Propiedades
+        </div>
+    </div>
+
+    <script>
+        // Datos simulados de la estructura de carpetas con iconos específicos
+        let fileSystem = {
+            'C:\\Users\\pmardones001\\OneDrive - PwC\\Daniel Frias (CL)\'s files - Clientes\\Gobierno': {
+                'Banco de Chile': {
+                    type: 'folder',
+                    icon: '🏦',
+                    children: {
+                        'BCI': { type: 'folder', icon: '🏛️', children: {} },
+                        'CGE': { type: 'folder', icon: '⚡', children: {} },
+                        'CMPC': { type: 'folder', icon: '🌲', children: {} },
+                        'Colfondos': { type: 'folder', icon: '💰', children: {} },
+                        'Colmena': { type: 'folder', icon: '🐝', children: {} },
+                        'Cotalker': { type: 'folder', icon: '💬', children: {} },
+                        'Cross': { type: 'folder', icon: '✨', children: {} },
+                        'Interbank PE': { type: 'folder', icon: '🏦', children: {} },
+                        'K+N': { type: 'folder', icon: '🚚', children: {} },
+                        'Mutual': { type: 'folder', icon: '🤝', children: {} },
+                        'Nuam': { type: 'folder', icon: '🔧', children: {} },
+                        'Ripley': { type: 'folder', icon: '🛍️', children: {} },
+                        'SII': { type: 'folder', icon: '📊', children: {} },
+                        'Tanner': { type: 'folder', icon: '🏪', children: {} },
+                        'Template': { type: 'folder', icon: '📋', children: {} },
+                        'Walmart': { type: 'folder', icon: '🛒', children: {} }
+                    }
+                }
+            }
+        };
+
+        let currentPath = 'C:\\Users\\pmardones001\\OneDrive - PwC\\Daniel Frias (CL)\'s files - Clientes\\Gobierno';
+        let selectedItem = null;
+        let clipboard = null;
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePathBar();
+            renderFolderTree();
+            renderCurrentFolder();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Manejo del menú contextual
+            document.addEventListener('contextmenu', function(e) {
+                if (e.target.closest('.file-item')) {
+                    e.preventDefault();
+                    selectedItem = e.target.closest('.file-item');
+                    showContextMenu(e.clientX, e.clientY);
+                }
+            });
+
+            document.addEventListener('click', function() {
+                hideContextMenu();
+            });
+
+            // Drag and drop
+            const dropZone = document.getElementById('dropZone');
+            
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', function(e) {
+                if (!this.contains(e.relatedTarget)) {
+                    this.classList.remove('dragover');
+                }
+            });
+
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                handleFileDrop(e);
+            });
+
+            // Efectos de selección
+            document.addEventListener('click', function(e) {
+                const fileItem = e.target.closest('.file-item');
+                if (fileItem) {
+                    document.querySelectorAll('.file-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    fileItem.classList.add('selected');
+                }
+            });
+        }
+
+        function updatePathBar() {
+            document.getElementById('pathBar').value = currentPath;
+            updateBreadcrumb();
+        }
+
+        function updateBreadcrumb() {
+            const breadcrumb = document.getElementById('breadcrumb');
+            const pathParts = currentPath.split('\\').filter(part => part);
+            
+            breadcrumb.innerHTML = '';
+            
+            pathParts.forEach((part, index) => {
+                if (part) {
+                    const item = document.createElement('span');
+                    item.className = 'breadcrumb-item';
+                    item.textContent = part.length > 20 ? part.substring(0, 20) + '...' : part;
+                    item.title = part;
+                    item.onclick = () => navigateToPath(pathParts.slice(0, index + 1).join('\\'));
+                    breadcrumb.appendChild(item);
+                    
+                    if (index < pathParts.length - 1) {
+                        const separator = document.createElement('span');
+                        separator.className = 'breadcrumb-separator';
+                        separator.textContent = '▶';
+                        breadcrumb.appendChild(separator);
+                    }
+                }
+            });
+        }
+
+        function renderFolderTree() {
+            const treeContainer = document.getElementById('folderTree');
+            treeContainer.innerHTML = '';
+            
+            function createFolderNode(name, path, children, icon = '📁') {
+                const folderDiv = document.createElement('div');
+                folderDiv.className = 'folder';
+                
+                const header = document.createElement('div');
+                header.className = 'folder-header';
+                header.setAttribute('data-path', path);
+                header.onclick = () => navigateToPath(path);
+                
+                header.innerHTML = `
+                    <span class="folder-icon">${icon}</span>
+                    <span class="folder-name">${name}</span>
+                `;
+                
+                folderDiv.appendChild(header);
+                
+                if (children && Object.keys(children).length > 0) {
+                    const childrenDiv = document.createElement('div');
+                    childrenDiv.className = 'folder-children';
+                    
+                    Object.keys(children).forEach(childName => {
+                        if (children[childName].type === 'folder') {
+                            const childPath = path + '\\' + childName;
+                            const childIcon = children[childName].icon || '📁';
+                            const childNode = createFolderNode(childName, childPath, children[childName].children, childIcon);
+                            childrenDiv.appendChild(childNode);
+                        }
+                    });
+                    
+                    folderDiv.appendChild(childrenDiv);
+                    folderDiv.classList.add('expanded');
+                }
+                
+                return folderDiv;
+            }
+            
+            // Renderizar la estructura de carpetas
+            const rootData = getCurrentFolderData();
+            if (rootData && rootData.children) {
+                Object.keys(rootData.children).forEach(name => {
+                    if (rootData.children[name].type === 'folder') {
+                        const folderPath = currentPath + '\\' + name;
+                        const folderIcon = rootData.children[name].icon || '📁';
+                        const folderNode = createFolderNode(name, folderPath, rootData.children[name].children, folderIcon);
+                        treeContainer.appendChild(folderNode);
+                    }
+                });
+            }
+        }
+
+        function renderCurrentFolder() {
+            const fileGrid = document.getElementById('fileGrid');
+            fileGrid.innerHTML = '';
+            
+            const currentData = getCurrentFolderData();
+            if (!currentData || !currentData.children) return;
+            
+            Object.keys(currentData.children).forEach((name, index) => {
+                const item = currentData.children[name];
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.draggable = true;
+                fileItem.setAttribute('data-name', name);
+                fileItem.setAttribute('data-type', item.type);
+                fileItem.style.animationDelay = `${index * 0.1}s`;
+                
+                const icon = item.icon || (item.type === 'folder' ? '📁' : getFileIcon(name));
+                
+                fileItem.innerHTML = `
+                    <div class="file-icon">${icon}</div>
+                    <div class="file-name" ondblclick="startRename(this)">${name}</div>
+                `;
+                
+                // Eventos de drag
+                fileItem.addEventListener('dragstart', function(e) {
+                    this.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', name);
+                });
+                
+                fileItem.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+                
+                // Doble clic para abrir carpetas
+                if (item.type === 'folder') {
+                    fileItem.addEventListener('dblclick', function(e) {
+                        if (!e.target.classList.contains('file-name')) {
+                            navigateToPath(currentPath + '\\' + name);
+                        }
+                    });
+                }
+                
+                fileGrid.appendChild(fileItem);
+            });
+        }
+
+        function getFileIcon(fileName) {
+            const extension = fileName.split('.').pop().toLowerCase();
+            const iconMap = {
+                'pdf': '📄',
+                'doc': '📝',
+                'docx': '📝',
+                'xls': '📊',
+                'xlsx': '📊',
+                'ppt': '📽️',
+                'pptx': '📽️',
+                'jpg': '🖼️',
+                'jpeg': '🖼️',
+                'png': '🖼️',
+                'gif': '🖼️',
+                'mp4': '🎬',
+                'mp3': '🎵',
+                'zip': '📦',
+                'rar': '📦',
+                'txt': '📄'
+            };
+            return iconMap[extension] || '📄';
+        }
+
+        function getCurrentFolderData() {
+            const pathParts = currentPath.split('\\').filter(part => part);
+            let current = fileSystem;
+            
+            for (const part of pathParts) {
+                if (current[part]) {
+                    current = current[part];
+                } else if (current.children && current.children[part]) {
+                    current = current.children[part];
+                } else {
+                    return null;
+                }
+            }
+            
+            return current;
+        }
+
+        function navigateToPath(path) {
+            currentPath = path;
+            updatePathBar();
+            renderCurrentFolder();
+            
+            // Actualizar selección en el árbol
+            document.querySelectorAll('.folder-header').forEach(header => {
+                header.classList.remove('selected');
+            });
+            
+            const targetHeader = document.querySelector(`[data-path="${path}"]`);
+            if (targetHeader) {
+                targetHeader.classList.add('selected');
+            }
+        }
+
+        function createNewFolder() {
+            const name = prompt('💡 Nombre de la nueva carpeta:');
+            if (name && name.trim()) {
+                const currentData = getCurrentFolderData();
+                if (currentData && currentData.children) {
+                    currentData.children[name.trim()] = {
+                        type: 'folder',
+                        icon: '📁',
+                        children: {}
+                    };
+                    renderFolderTree();
+                    renderCurrentFolder();
+                }
+            }
+        }
+
+        function uploadFiles() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.onchange = function(e) {
+                const files = Array.from(e.target.files);
+                const currentData = getCurrentFolderData();
+                
+                if (currentData && currentData.children) {
+                    files.forEach(file => {
+                        currentData.children[file.name] = {
+                            type: 'file',
+                            data: file
+                        };
+                    });
+                    renderCurrentFolder();
+                }
+            };
+            input.click();
+        }
+
+        function handleFileDrop(e) {
+            const files = Array.from(e.dataTransfer.files);
+            const currentData = getCurrentFolderData();

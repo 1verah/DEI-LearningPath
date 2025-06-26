@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap de Roles IT - Simulador</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .role-selector {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .role-selector:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .role-selector.active {
+            background: #e74c3c;
+            transform: translateY(-2px);
+        }
+
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .level-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .level-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .level-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .foundational { background: #95a5a6; }
+        .associate { background: #f39c12; }
+        .professional { background: #e74c3c; }
+        .expert { background: #9b59b6; }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #ecf0f1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .badge:hover {
+            border-color: #3498db;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .badge.completed {
+            background: #d5f4e6;
+            border-color: #27ae60;
+        }
+
+        .badge.required {
+            background: #fef5e7;
+            border-color: #f39c12;
+        }
+
+        .badge-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-size: 18px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .cloud { background: #3498db; }
+        .ai { background: #9b59b6; }
+        .security { background: #e74c3c; }
+        .data { background: #f39c12; }
+        .dev { background: #27ae60; }
+
+        .badge-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.2;
+        }
+
+        .role-info {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .role-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .role-info p {
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .modal-badge-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .modal-badge-info h3 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .modal-badge-info p {
+            color: #7f8c8d;
+            margin: 0;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #7f8c8d;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .resources-section {
+            margin-top: 20px;
+        }
+
+        .resources-section h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resource-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .resource-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .resource-info {
+            flex: 1;
+        }
+
+        .resource-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+
+        .resource-description {
+            color: #7f8c8d;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+
+        .resource-url {
+            color: #3498db;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .course { background: #e74c3c; }
+        .documentation { background: #f39c12; }
+        .certification { background: #27ae60; }
+        .tutorial { background: #9b59b6; }
+        .book { background: #34495e; }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .controls {
+                gap: 10px;
+            }
+            
+            .role-selector {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+
+            .modal-content {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .resource-item {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Roadmap de Roles IT</h1>
+        <p class="subtitle">Mapeo de crecimiento profesional - Cloud, IA y Tecnología</p>
+        
+        <div class="controls">
+            <button class="role-selector active" data-role="all">Todos los Roles</button>
+            <button class="role-selector" data-role="manager">Manager</button>
+            <button class="role-selector" data-role="consultor-lider">Consultor Líder</button>
+            <button class="role-selector" data-role="consultor-senior">Consultor Senior</button>
+            <button class="role-selector" data-role="consultor">Consultor</button>
+            <button class="role-selector" data-role="analista">Analista</button>
+            <button class="role-selector" data-role="trainer">Trainer</button>
+        </div>
+
+        <div id="role-info" class="role-info"></div>
+        
+        <div class="roadmap-grid" id="roadmapGrid">
+            <!-- Los niveles se generarán dinámicamente -->
+        </div>
+
+        <!-- Modal para recursos -->
+        <div id="badgeModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="modal-header">
+                    <div id="modalBadgeIcon" class="modal-badge-icon"></div>
+                    <div class="modal-badge-info">
+                        <h3 id="modalBadgeTitle"></h3>
+                        <p id="modalBadgeDescription"></p>
+                    </div>
+                </div>
+                <div class="resources-section">
+                    <h4>📚 Recursos de Aprendizaje</h4>
+                    <div id="resourceList" class="resource-list">
+                        <!-- Los recursos se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Definición de badges por categoría con recursos
+        const badges = {
+            foundational: [
+                { 
+                    id: 'it-basics', 
+                    name: 'Fundamentos IT', 
+                    category: 'dev', 
+                    description: 'Conceptos básicos de tecnología',
+                    resources: [
+                        { type: 'course', title: 'CompTIA IT Fundamentals', description: 'Curso básico de fundamentos IT', url: 'https://example.com/comptia-it-fundamentals' },
+                        { type: 'tutorial', title: 'Introducción a las TI', description: 'Tutorial interactivo sobre conceptos básicos', url: 'https://example.com/intro-ti' },
+                        { type: 'book', title: 'IT Essentials Companion Guide', description: 'Guía completa de fundamentos', url: 'https://example.com/it-essentials-book' }
+                    ]
+                },
+                { 
+                    id: 'networking', 
+                    name: 'Networking Básico', 
+                    category: 'security', 
+                    description: 'Conceptos de redes',
+                    resources: [
+                        { type: 'course', title: 'Cisco Networking Basics', description: 'Fundamentos de redes con Cisco', url: 'https://example.com/cisco-networking' },
+                        { type: 'documentation', title: 'TCP/IP Protocol Suite', description: 'Documentación oficial de protocolos', url: 'https://example.com/tcpip-docs' },
+                        { type: 'tutorial', title: 'Network+ Study Guide', description: 'Guía de estudio para redes', url: 'https://example.com/network-plus' }
+                    ]
+                },
+                { 
+                    id: 'os-basics', 
+                    name: 'Sistemas Operativos', 
+                    category: 'dev', 
+                    description: 'Windows, Linux, MacOS',
+                    resources: [
+                        { type: 'course', title: 'Linux Foundation Course', description: 'Curso oficial de Linux', url: 'https://example.com/linux-foundation' },
+                        { type: 'tutorial', title: 'Windows Server Administration', description: 'Administración de Windows Server', url: 'https://example.com/windows-admin' },
+                        { type: 'documentation', title: 'macOS Developer Documentation', description: 'Docs oficiales de Apple', url: 'https://example.com/macos-docs' }
+                    ]
+                },
+                { 
+                    id: 'programming-intro', 
+                    name: 'Introducción a Programación', 
+                    category: 'dev', 
+                    description: 'Lógica de programación',
+                    resources: [
+                        { type: 'course', title: 'CS50 Introduction to Programming', description: 'Curso de Harvard sobre programación', url: 'https://example.com/cs50' },
+                        { type: 'tutorial', title: 'FreeCodeCamp Basics', description: 'Tutorial gratuito de programación', url: 'https://example.com/freecodecamp' },
+                        { type: 'book', title: 'Clean Code', description: 'Principios de código limpio', url: 'https://example.com/clean-code' }
+                    ]
+                },
+                { 
+                    id: 'database-basics', 
+                    name: 'Bases de Datos Básicas', 
+                    category: 'data', 
+                    description: 'SQL básico',
+                    resources: [
+                        { type: 'course', title: 'SQL Fundamentals', description: 'Curso completo de SQL', url: 'https://example.com/sql-fundamentals' },
+                        { type: 'tutorial', title: 'W3Schools SQL Tutorial', description: 'Tutorial interactivo de SQL', url: 'https://example.com/w3schools-sql' },
+                        { type: 'certification', title: 'Oracle Database SQL Certified', description: 'Certificación oficial de Oracle', url: 'https://example.com/oracle-sql-cert' }
+                    ]
+                },
+                { 
+                    id: 'cloud-intro', 
+                    name: 'Introducción Cloud', 
+                    category: 'cloud', 
+                    description: 'Conceptos de nube',
+                    resources: [
+                        { type: 'course', title: 'AWS Cloud Practitioner', description: 'Curso básico de AWS', url: 'https://example.com/aws-practitioner' },
+                        { type: 'course', title: 'Azure Fundamentals', description: 'Fundamentos de Microsoft Azure', url: 'https://example.com/azure-fundamentals' },
+                        { type: 'documentation', title: 'Google Cloud Basics', description: 'Documentación básica de GCP', url: 'https://example.com/gcp-basics' }
+                    ]
+                }
+            ],
+            associate: [
+                { 
+                    id: 'cloud-practitioner', 
+                    name: 'Cloud Practitioner', 
+                    category: 'cloud', 
+                    description: 'Certificación básica cloud',
+                    resources: [
+                        { type: 'certification', title: 'AWS Certified Cloud Practitioner', description: 'Certificación oficial de AWS', url: 'https://example.com/aws-ccp' },
+                        { type: 'certification', title: 'Azure Fundamentals AZ-900', description: 'Certificación básica de Azure', url: 'https://example.com/az-900' },
+                        { type: 'course', title: 'Multi-Cloud Essentials', description: 'Conceptos multi-nube', url: 'https://example.com/multi-cloud' }
+                    ]
+                },
+                { 
+                    id: 'python-dev', 
+                    name: 'Python Developer', 
+                    category: 'dev', 
+                    description: 'Desarrollo en Python',
+                    resources: [
+                        { type: 'course', title: 'Python for Everybody', description: 'Curso completo de Python', url: 'https://example.com/python-everybody' },
+                        { type: 'tutorial', title: 'Real Python Tutorials', description: 'Tutoriales avanzados de Python', url: 'https://example.com/real-python' },
+                        { type: 'certification', title: 'Python Institute PCEP', description: 'Certificación oficial de Python', url: 'https://example.com/pcep' }
+                    ]
+                },
+                { 
+                    id: 'data-analysis', 
+                    name: 'Análisis de Datos', 
+                    category: 'data', 
+                    description: 'Excel, Power BI',
+                    resources: [
+                        { type: 'course', title: 'Microsoft Power BI Fundamentals', description: 'Curso oficial de Power BI', url: 'https://example.com/powerbi' },
+                        { type: 'tutorial', title: 'Excel Data Analysis', description: 'Análisis avanzado en Excel', url: 'https://example.com/excel-analysis' },
+                        { type: 'certification', title: 'Microsoft Certified: Data Analyst', description: 'Certificación de analista de datos', url: 'https://example.com/ms-data-analyst' }
+                    ]
+                },
+                { 
+                    id: 'agile-scrum', 
+                    name: 'Agile & Scrum', 
+                    category: 'dev', 
+                    description: 'Metodologías ágiles',
+                    resources: [
+                        { type: 'certification', title: 'Certified ScrumMaster (CSM)', description: 'Certificación oficial Scrum', url: 'https://example.com/csm' },
+                        { type: 'course', title: 'Agile Project Management', description: 'Gestión ágil de proyectos', url: 'https://example.com/agile-pm' },
+                        { type: 'book', title: 'Scrum Guide', description: 'Guía oficial de Scrum', url: 'https://example.com/scrum-guide' }
+                    ]
+                },
+                { 
+                    id: 'security-basics', 
+                    name: 'Seguridad IT', 
+                    category: 'security', 
+                    description: 'Conceptos de ciberseguridad',
+                    resources: [
+                        { type: 'course', title: 'CompTIA Security+', description: 'Certificación de seguridad', url: 'https://example.com/security-plus' },
+                        { type: 'tutorial', title: 'OWASP Security Basics', description: 'Fundamentos OWASP', url: 'https://example.com/owasp-basics' },
+                        { type: 'documentation', title: 'NIST Cybersecurity Framework', description: 'Marco de ciberseguridad NIST', url: 'https://example.com/nist-framework' }
+                    ]
+                },
+                { 
+                    id: 'ai-fundamentals', 
+                    name: 'IA Fundamentals', 
+                    category: 'ai', 
+                    description: 'Conceptos básicos de IA',
+                    resources: [
+                        { type: 'course', title: 'AI for Everyone', description: 'Curso de Andrew Ng sobre IA', url: 'https://example.com/ai-everyone' },
+                        { type: 'certification', title: 'Microsoft AI Fundamentals', description: 'Certificación AI-900 de Microsoft', url: 'https://example.com/ai-900' },
+                        { type: 'tutorial', title: 'Machine Learning Crash Course', description: 'Curso rápido de ML de Google', url: 'https://example.com/ml-crash-course' }
+                    ]
+                }
+            ],
+            professional: [
+                { 
+                    id: 'cloud-architect', 
+                    name: 'Cloud Architect', 
+                    category: 'cloud', 
+                    description: 'Arquitectura en la nube',
+                    resources: [
+                        { type: 'certification', title: 'AWS Solutions Architect', description: 'Certificación avanzada AWS', url: 'https://example.com/aws-sa' },
+                        { type: 'certification', title: 'Azure Solutions Architect', description: 'Certificación AZ-305', url: 'https://example.com/az-305' },
+                        { type: 'course', title: 'Cloud Architecture Patterns', description: 'Patrones de arquitectura cloud', url: 'https://example.com/cloud-patterns' }
+                    ]
+                },
+                { 
+                    id: 'devops-engineer', 
+                    name: 'DevOps Engineer', 
+                    category: 'dev', 
+                    description: 'CI/CD, automatización',
+                    resources: [
+                        { type: 'course', title: 'DevOps Engineering Fundamentals', description: 'Fundamentos de DevOps', url: 'https://example.com/devops-fundamentals' },
+                        { type: 'tutorial', title: 'Docker & Kubernetes', description: 'Containerización avanzada', url: 'https://example.com/docker-k8s' },
+                        { type: 'certification', title: 'AWS DevOps Engineer', description: 'Certificación DevOps de AWS', url: 'https://example.com/aws-devops' }
+                    ]
+                }
+            ],
+            expert: [
+                { 
+                    id: 'solution-architect', 
+                    name: 'Solution Architect', 
+                    category: 'cloud', 
+                    description: 'Arquitecto de soluciones',
+                    resources: [
+                        { type: 'certification', title: 'TOGAF Architecture', description: 'Certificación TOGAF', url: 'https://example.com/togaf' },
+                        { type: 'book', title: 'Software Architecture Patterns', description: 'Patrones de arquitectura', url: 'https://example.com/arch-patterns' },
+                        { type: 'course', title: 'Enterprise Architecture', description: 'Arquitectura empresarial', url: 'https://example.com/enterprise-arch' }
+                    ]
+                }
+            ]
+        };
+
+        // Definición de roles y sus requisitos
+        const roles = {
+            manager: {
+                name: 'Manager',
+                description: 'Líder de equipos tecnológicos, enfocado en gestión de proyectos y personas.',
+                requirements: {
+                    foundational: ['it-basics', 'cloud-intro'],
+                    associate: ['agile-scrum', 'cloud-practitioner'],
+                    professional: ['project-management'],
+                    expert: ['tech-lead']
+                }
+            },
+            'consultor-lider': {
+                name: 'Consultor Líder',
+                description: 'Consultor senior con capacidad de liderar proyectos complejos y equipos multidisciplinarios.',
+                requirements: {
+                    foundational: ['it-basics', 'networking', 'database-basics'],
+                    associate: ['cloud-practitioner', 'agile-scrum', 'data-analysis'],
+                    professional: ['cloud-architect', 'project-management'],
+                    expert: ['solution-architect', 'enterprise-architect']
+                }
+            },
+            'consultor-senior': {
+                name: 'Consultor Senior',
+                description: 'Consultor especializado con experiencia en múltiples tecnologías y proyectos.',
+                requirements: {
+                    foundational: ['it-basics', 'networking', 'programming-intro'],
+                    associate: ['cloud-practitioner', 'python-dev', 'security-basics'],
+                    professional: ['cloud-architect', 'devops-engineer'],
+                    expert: ['solution-architect']
+                }
+            },
+            consultor: {
+                name: 'Consultor',
+                description: 'Profesional que brinda asesoría técnica en proyectos de transformación digital.',
+                requirements: {
+                    foundational: ['it-basics', 'cloud-intro', 'programming-intro'],
+                    associate: ['cloud-practitioner', 'agile-scrum'],
+                    professional: ['cloud-architect'],
+                    expert: []
+                }
+            },
+            analista: {
+                name: 'Analista',
+                description: 'Especialista en análisis de datos, sistemas y procesos tecnológicos.',
+                requirements: {
+                    foundational: ['it-basics', 'database-basics'],
+                    associate: ['data-analysis', 'python-dev', 'ai-fundamentals'],
+                    professional: ['data-engineer', 'ml-engineer'],
+                    expert: ['data-scientist', 'ai-specialist']
+                }
+            },
+            trainer: {
+                name: 'Trainer',
+                description: 'Formador especializado en tecnologías emergentes y desarrollo de capacidades.',
+                requirements: {
+                    foundational: ['it-basics', 'cloud-intro', 'programming-intro'],
+                    associate: ['cloud-practitioner', 'ai-fundamentals', 'agile-scrum'],
+                    professional: ['ml-engineer', 'devops-engineer'],
+                    expert: ['ai-specialist', 'tech-lead']
+                }
+            }
+        };
+
+        let currentRole = 'all';
+        let completedBadges = [];
+
+        function renderRoleInfo() {
+            const roleInfoEl = document.getElementById('role-info');
+            if (currentRole === 'all') {
+                roleInfoEl.innerHTML = `
+                    <h3>📋 Vista General de Todos los Roles</h3>
+                    <p>Explora los diferentes caminos de crecimiento profesional en tecnología. Cada rol tiene un roadmap específico con badges requeridos según el nivel de experiencia.</p>
+                `;
+            } else {
+                const role = roles[currentRole];
+                const totalBadges = Object.values(role.requirements).flat().length;
+                const completedCount = Object.values(role.requirements).flat().filter(b => completedBadges.includes(b)).length;
+                const progress = (completedCount / totalBadges) * 100;
+                
+                roleInfoEl.innerHTML = `
+                    <h3>👨‍💼 ${role.name}</h3>
+                    <p>${role.description}</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="stats">
+                        <span>Progreso: ${completedCount}/${totalBadges} badges</span>
+                        <span>${Math.round(progress)}% completado</span>
+                    </div>
+                `;
+            }
+        }
+
+        function renderRoadmap() {
+            const grid = document.getElementById('roadmapGrid');
+            const levels = ['foundational', 'associate', 'professional', 'expert'];
+            const levelNames = {
+                foundational: 'Fundacional',
+                associate: 'Asociado',
+                professional: 'Profesional',
+                expert: 'Experto'
+            };
+            
+            grid.innerHTML = '';
+            
+            levels.forEach(level => {
+                const levelCard = document.createElement('div');
+                levelCard.className = 'level-card';
+                
+                const relevantBadges = currentRole === 'all' 
+                    ? badges[level] 
+                    : badges[level].filter(badge => 
+                        currentRole === 'all' || 
+                        (roles[currentRole] && roles[currentRole].requirements[level]?.includes(badge.id))
+                    );
+                
+                if (relevantBadges.length === 0 && currentRole !== 'all') return;
+                
+                levelCard.innerHTML = `
+                    <div class="level-title">
+                        <div class="level-icon ${level}">${level.charAt(0).toUpperCase()}</div>
+                        ${levelNames[level]}
+                    </div>
+                    <div class="badges-grid">
+                        ${relevantBadges.map(badge => `
+                            <div class="badge ${completedBadges.includes(badge.id) ? 'completed' : ''} ${
+                                currentRole !== 'all' && roles[currentRole]?.requirements[level]?.includes(badge.id) ? 'required' : ''
+                            }" data-badge="${badge.id}" title="${badge.description}">
+                                <div class="badge-icon ${badge.category}">
+                                    ${getBadgeIcon(badge.category)}
+                                </div>
+                                <div class="badge-name">${badge.name}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                grid.appendChild(levelCard);
+            });
+            
+            // Agregar event listeners para los badges
+            document.querySelectorAll('.badge').forEach(badge => {
+                badge.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const badgeId = this.dataset.badge;
+                    
+                    // Si es click derecho o con Ctrl, toggle badge
+                    if (e.ctrlKey || e.metaKey || e.button === 2) {
+                        toggleBadge(badgeId);
+                    } else {
+                        // Click normal, mostrar modal
+                        showBadgeModal(badgeId);
+                    }
+                });
+                
+                // Agregar menú contextual
+                badge.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const badgeId = this.dataset.badge;
+                    toggleBadge(badgeId);
+                });
+            });
+        }
+
+        function getBadgeIcon(category) {
+            const icons = {
+                cloud: '☁️',
+                ai: '🤖',
+                security: '🔒',
+                data: '📊',
+                dev: '💻'
+            };
+            return icons[category] || '🎯';
+        }
+
+        function showBadgeModal(badgeId) {
+            // Encontrar el badge en todas las categorías
+            let badgeData = null;
+            for (const level in badges) {
+                badgeData = badges[level].find(b => b.id === badgeId);
+                if (badgeData) break;
+            }
+            
+            if (!badgeData) return;
+            
+            const modal = document.getElementById('badgeModal');
+            const modalIcon = document.getElementById('modalBadgeIcon');
+            const modalTitle = document.getElementById('modalBadgeTitle');
+            const modalDescription = document.getElementById('modalBadgeDescription');
+            const resourceList = document.getElementById('resourceList');
+            
+            // Configurar el modal
+            modalIcon.className = `modal-badge-icon ${badgeData.category}`;
+            modalIcon.textContent = getBadgeIcon(badgeData.category);
+            modalTitle.textContent = badgeData.name;
+            modalDescription.textContent = badgeData.description;
+            
+            // Generar recursos
+            resourceList.innerHTML = badgeData.resources ? badgeData.resources.map(resource => `
+                <a href="${resource.url}" class="resource-item" target="_blank" rel="noopener noreferrer">
+                    <div class="resource-icon ${resource.type}">
+                        ${getResourceIcon(resource.type)}
+                    </div>
+                    <div class="resource-info">
+                        <div class="resource-title">${resource.title}</div>
+                        <div class="resource-description">${resource.description}</div>
+                        <div class="resource-url">${resource.url}</div>
+                    </div>
+                </a>
+            `).join('') : '<p>No hay recursos disponibles para este badge.</p>';
+            
+            // Mostrar modal
+            modal.classList.add('show');
+        }
+
+        function getResourceIcon(type) {
+            const icons = {
+                course: '🎓',
+                documentation: '📖',
+                certification: '🏆',
+                tutorial: '💡',
+                book: '📚'
+            };
+            return icons[type] || '📄';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('badgeModal');
+            modal.classList.remove('show');
+        }
+
+        function toggleBadge(badgeId) {
+            const index = completedBadges.indexOf(badgeId);
+            if (index > -1) {
+                completedBadges.splice(index, 1);
+            } else {
+                completedBadges.push(badgeId);
+            }
+            renderRoleInfo();
+            renderRoadmap();
+        }
+
+        // Event listeners
+        document.querySelectorAll('.role-selector').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.role-selector').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentRole = this.dataset.role;
+                renderRoleInfo();
+                renderRoadmap();
+            });
+        });
+
+        // Modal event listeners
+        document.getElementById('badgeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.querySelector('.close-modal').addEventListener('click', closeModal);
+
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Inicialización
+        renderRoleInfo();
+        renderRoadmap();
+    </script>
+</body>
+</html>
