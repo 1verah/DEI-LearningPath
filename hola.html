@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Roadmap de Roles IT - Simulador</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    h3 {
+      color: #2980b9;
+    }
+    h4 {
+      color: #16a085;
+    }
+    ul {
+      list-style-type: disc;
+      margin-left: 20px;
+    }
+    a {
+      text-decoration: none;
+      color: #34495e;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .rol {
+      margin-bottom: 30px;
+    }
+    .curso {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+ 
+  <h2>🚀 Roadmap de Roles IT</h2>
+  <p>Mapeo de crecimiento profesional - Cloud, IA y Tecnología</p>
+ 
+  <div id="contenedor-cursos"></div>
+ 
+  <script>
+    const data = {
+      "roles": [
+        {
+          "nombre": "Consultor",
+          "cursos": [
+            {
+              "titulo": "Fundamentos de Cloud",
+              "descripcion": "Introducción a los conceptos básicos de la computación en la nube.",
+              "subcursos": [
+                {
+                  "titulo": "AWS Básico",
+                  "url": "https://example.com/aws-basico"
+                },
+                {
+                  "titulo": "Azure para principiantes",
+                  "url": "https://example.com/azure-principiantes"
+                }
+              ]
+            },
+            {
+              "titulo": "Introducción a DevOps",
+              "descripcion": "Conceptos clave y herramientas de DevOps.",
+              "subcursos": [
+                {
+                  "titulo": "CI/CD con GitHub Actions",
+                  "url": "https://example.com/github-actions"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "nombre": "Líder Consultor",
+          "cursos": [
+            {
+              "titulo": "Gestión de Proyectos Ágiles",
+              "descripcion": "Scrum, Kanban y metodologías ágiles.",
+              "subcursos": [
+                {
+                  "titulo": "Scrum Master",
+                  "url": "https://example.com/scrum-master"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+ 
+    const contenedor = document.getElementById("contenedor-cursos");
+ 
+    data.roles.forEach(rol => {
+      const rolDiv = document.createElement("div");
+      rolDiv.className = "rol";
+      rolDiv.innerHTML = `<h3>${rol.nombre}</h3>`;
+ 
+      rol.cursos.forEach(curso => {
+        const cursoDiv = document.createElement("div");
+        cursoDiv.className = "curso";
+        cursoDiv.innerHTML = `<h4>${curso.titulo}</h4><p>${curso.descripcion}</p>`;
+ 
+        const lista = document.createElement("ul");
+        curso.subcursos.forEach(sub => {
+          const item = document.createElement("li");
+          item.innerHTML = `<a href="${sub.url}" target="_blank">${sub.titulo}</a>`;
+          lista.appendChild(item);
+        });
+ 
+        cursoDiv.appendChild(lista);
+        rolDiv.appendChild(cursoDiv);
+      });
+ 
+      contenedor.appendChild(rolDiv);
+    });
+  </script>
+ 
+</body>
+</html>
+ 

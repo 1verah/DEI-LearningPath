@@ -1,0 +1,853 @@
+{
+  "roles": [
+    {
+      "nombre": "Manager",
+      "cursos": [
+        {
+          "titulo": "Fundamentos IT",
+          "descripcion": "Conceptos básicos de tecnología",
+          "subcursos": [
+            {
+              "titulo": "CompTIA IT Fundamentals",
+              "url": "https://www.comptia.org/certifications/itf",
+              "completado": true
+            },
+            {
+              "titulo": "Introducción a las TI",
+              "url": "https://www.coursera.org/learn/tecnologias-informacion",
+              "completado": true
+            },
+            {
+              "titulo": "IT Essentials Companion Guide",
+              "url": "https://www.ciscopress.com/store/it-essentials-companion-guide-9781587132636",
+              "completado": true
+            }
+          ]
+        },
+        {
+          "titulo": "Introducción Cloud",
+          "descripcion": "Conceptos de nube",
+          "subcursos": [
+            {
+              "titulo": "AWS Cloud Practitioner",
+              "url": "https://www.aws.training/Details/Curriculum?id=20685",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Fundamentals",
+              "url": "https://learn.microsoft.com/en-us/certifications/azure-fundamentals/",
+              "completado": false
+            },
+            {
+              "titulo": "Google Cloud Basics",
+              "url": "https://cloud.google.com/training/cloud-infrastructure",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Agile & Scrum",
+          "descripcion": "Metodologías ágiles",
+          "subcursos": [
+            {
+              "titulo": "Certified ScrumMaster (CSM)",
+              "url": "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster",
+              "completado": false
+            },
+            {
+              "titulo": "Agile Project Management",
+              "url": "https://www.coursera.org/specializations/agile-project-management",
+              "completado": false
+            },
+            {
+              "titulo": "Scrum Guide",
+              "url": "https://scrumguides.org/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Cloud Practitioner",
+          "descripcion": "Certificación básica cloud",
+          "subcursos": [
+            {
+              "titulo": "AWS Certified Cloud Practitioner",
+              "url": "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Fundamentals AZ-900",
+              "url": "https://learn.microsoft.com/en-us/certifications/exams/az-900/",
+              "completado": false
+            },
+            {
+              "titulo": "Multi-Cloud Essentials",
+              "url": "https://www.coursera.org/learn/multicloud-computing",
+              "completado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "Consultor Líder",
+      "cursos": [
+        {
+          "titulo": "Fundamentos IT",
+          "descripcion": "Conceptos básicos de tecnología",
+          "subcursos": [
+            {
+              "titulo": "CompTIA IT Fundamentals",
+              "url": "https://www.comptia.org/certifications/itf",
+              "completado": true
+            },
+            {
+              "titulo": "Introducción a las TI",
+              "url": "https://www.coursera.org/learn/tecnologias-informacion",
+              "completado": true
+            },
+            {
+              "titulo": "IT Essentials Companion Guide",
+              "url": "https://www.ciscopress.com/store/it-essentials-companion-guide-9781587132636",
+              "completado": true
+            }
+          ]
+        },
+        {
+          "titulo": "Networking Básico",
+          "descripcion": "Conceptos de redes",
+          "subcursos": [
+            {
+              "titulo": "Cisco Networking Basics",
+              "url": "https://skillsforall.com/course/networking-basics",
+              "completado": false
+            },
+            {
+              "titulo": "TCP/IP Protocol Suite",
+              "url": "https://www.geeksforgeeks.org/tcp-ip-model/",
+              "completado": false
+            },
+            {
+              "titulo": "Network+ Study Guide",
+              "url": "https://www.comptia.org/certifications/network",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Bases de Datos Básicas",
+          "descripcion": "SQL básico",
+          "subcursos": [
+            {
+              "titulo": "SQL Fundamentals",
+              "url": "https://www.coursera.org/learn/sql-for-data-science",
+              "completado": false
+            },
+            {
+              "titulo": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/",
+              "completado": false
+            },
+            {
+              "titulo": "Oracle Database SQL Certified",
+              "url": "https://education.oracle.com/oracle-database-sql-certified-associate/trackp_457",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Cloud Practitioner",
+          "descripcion": "Certificación básica cloud",
+          "subcursos": [
+            {
+              "titulo": "AWS Certified Cloud Practitioner",
+              "url": "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Fundamentals AZ-900",
+              "url": "https://learn.microsoft.com/en-us/certifications/exams/az-900/",
+              "completado": false
+            },
+            {
+              "titulo": "Multi-Cloud Essentials",
+              "url": "https://www.coursera.org/learn/multicloud-computing",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Agile & Scrum",
+          "descripcion": "Metodologías ágiles",
+          "subcursos": [
+            {
+              "titulo": "Certified ScrumMaster (CSM)",
+              "url": "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster",
+              "completado": false
+            },
+            {
+              "titulo": "Agile Project Management",
+              "url": "https://www.coursera.org/specializations/agile-project-management",
+              "completado": false
+            },
+            {
+              "titulo": "Scrum Guide",
+              "url": "https://scrumguides.org/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Análisis de Datos",
+          "descripcion": "Excel, Power BI",
+          "subcursos": [
+            {
+              "titulo": "Microsoft Power BI Fundamentals",
+              "url": "https://learn.microsoft.com/en-us/training/paths/get-started-power-bi/",
+              "completado": false
+            },
+            {
+              "titulo": "Excel Data Analysis",
+              "url": "https://www.coursera.org/learn/excel-data-analysis",
+              "completado": false
+            },
+            {
+              "titulo": "Microsoft Certified: Data Analyst",
+              "url": "https://learn.microsoft.com/en-us/certifications/data-analyst-associate/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Cloud Architect",
+          "descripcion": "Arquitectura en la nube",
+          "subcursos": [
+            {
+              "titulo": "AWS Solutions Architect",
+              "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate/",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Solutions Architect",
+              "url": "https://learn.microsoft.com/en-us/certifications/azure-solutions-architect/",
+              "completado": false
+            },
+            {
+              "titulo": "Cloud Architecture Patterns",
+              "url": "https://www.coursera.org/learn/cloud-architecture",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Solution Architect",
+          "descripcion": "Arquitecto de soluciones",
+          "subcursos": [
+            {
+              "titulo": "TOGAF Architecture",
+              "url": "https://www.opengroup.org/togaf",
+              "completado": false
+            },
+            {
+              "titulo": "Software Architecture Patterns",
+              "url": "https://refactoring.guru/es/design-patterns",
+              "completado": false
+            },
+            {
+              "titulo": "Enterprise Architecture",
+              "url": "https://www.coursera.org/courses?query=enterprise%20architecture",
+              "completado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "Consultor Senior",
+      "cursos": [
+        {
+          "titulo": "Fundamentos IT",
+          "descripcion": "Conceptos básicos de tecnología",
+          "subcursos": [
+            {
+              "titulo": "CompTIA IT Fundamentals",
+              "url": "https://www.comptia.org/certifications/itf",
+              "completado": true
+            },
+            {
+              "titulo": "Introducción a las TI",
+              "url": "https://www.coursera.org/learn/tecnologias-informacion",
+              "completado": true
+            },
+            {
+              "titulo": "IT Essentials Companion Guide",
+              "url": "https://www.ciscopress.com/store/it-essentials-companion-guide-9781587132636",
+              "completado": true
+            }
+          ]
+        },
+        {
+          "titulo": "Networking Básico",
+          "descripcion": "Conceptos de redes",
+          "subcursos": [
+            {
+              "titulo": "Cisco Networking Basics",
+              "url": "https://skillsforall.com/course/networking-basics",
+              "completado": false
+            },
+            {
+              "titulo": "TCP/IP Protocol Suite",
+              "url": "https://www.geeksforgeeks.org/tcp-ip-model/",
+              "completado": false
+            },
+            {
+              "titulo": "Network+ Study Guide",
+              "url": "https://www.comptia.org/certifications/network",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Introducción a Programación",
+          "descripcion": "Lógica de programación",
+          "subcursos": [
+            {
+              "titulo": "CS50 Introduction to Programming",
+              "url": "https://cs50.harvard.edu/x/",
+              "completado": false
+            },
+            {
+              "titulo": "FreeCodeCamp Basics",
+              "url": "https://www.freecodecamp.org/learn/",
+              "completado": false
+            },
+            {
+              "titulo": "Clean Code",
+              "url": "https://www.oreilly.com/library/view/clean-code/9780136083238/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Cloud Practitioner",
+          "descripcion": "Certificación básica cloud",
+          "subcursos": [
+            {
+              "titulo": "AWS Certified Cloud Practitioner",
+              "url": "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Fundamentals AZ-900",
+              "url": "https://learn.microsoft.com/en-us/certifications/exams/az-900/",
+              "completado": false
+            },
+            {
+              "titulo": "Multi-Cloud Essentials",
+              "url": "https://www.coursera.org/learn/multicloud-computing",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Python Developer",
+          "descripcion": "Desarrollo en Python",
+          "subcursos": [
+            {
+              "titulo": "Python for Everybody",
+              "url": "https://www.coursera.org/specializations/python",
+              "completado": false
+            },
+            {
+              "titulo": "Real Python Tutorials",
+              "url": "https://realpython.com/",
+              "completado": false
+            },
+            {
+              "titulo": "Python Institute PCEP",
+              "url": "https://pythoninstitute.org/pcep",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Seguridad IT",
+          "descripcion": "Conceptos de ciberseguridad",
+          "subcursos": [
+            {
+              "titulo": "CompTIA Security+",
+              "url": "https://www.comptia.org/certifications/security",
+              "completado": false
+            },
+            {
+              "titulo": "OWASP Security Basics",
+              "url": "https://owasp.org/www-project-top-ten/",
+              "completado": false
+            },
+            {
+              "titulo": "NIST Cybersecurity Framework",
+              "url": "https://www.nist.gov/cyberframework",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Cloud Architect",
+          "descripcion": "Arquitectura en la nube",
+          "subcursos": [
+            {
+              "titulo": "AWS Solutions Architect",
+              "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate/",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Solutions Architect",
+              "url": "https://learn.microsoft.com/en-us/certifications/azure-solutions-architect/",
+              "completado": false
+            },
+            {
+              "titulo": "Cloud Architecture Patterns",
+              "url": "https://www.coursera.org/learn/cloud-architecture",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "DevOps Engineer",
+          "descripcion": "CI/CD, automatización",
+          "subcursos": [
+            {
+              "titulo": "DevOps Engineering Fundamentals",
+              "url": "https://www.edx.org/learn/devops",
+              "completado": false
+            },
+            {
+              "titulo": "Docker & Kubernetes",
+              "url": "https://www.coursera.org/specializations/docker-kubernetes",
+              "completado": false
+            },
+            {
+              "titulo": "AWS DevOps Engineer",
+              "url": "https://aws.amazon.com/certification/certified-devops-engineer-professional/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Solution Architect",
+          "descripcion": "Arquitecto de soluciones",
+          "subcursos": [
+            {
+              "titulo": "TOGAF Architecture",
+              "url": "https://www.opengroup.org/togaf",
+              "completado": false
+            },
+            {
+              "titulo": "Software Architecture Patterns",
+              "url": "https://refactoring.guru/es/design-patterns",
+              "completado": false
+            },
+            {
+              "titulo": "Enterprise Architecture",
+              "url": "https://www.coursera.org/courses?query=enterprise%20architecture",
+              "completado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "Consultor",
+      "cursos": [
+        {
+          "titulo": "Fundamentos IT",
+          "descripcion": "Conceptos básicos de tecnología",
+          "subcursos": [
+            {
+              "titulo": "CompTIA IT Fundamentals",
+              "url": "https://www.comptia.org/certifications/itf",
+              "completado": true
+            },
+            {
+              "titulo": "Introducción a las TI",
+              "url": "https://www.coursera.org/learn/tecnologias-informacion",
+              "completado": true
+            },
+            {
+              "titulo": "IT Essentials Companion Guide",
+              "url": "https://www.ciscopress.com/store/it-essentials-companion-guide-9781587132636",
+              "completado": true
+            }
+          ]
+        },
+        {
+          "titulo": "Introducción Cloud",
+          "descripcion": "Conceptos de nube",
+          "subcursos": [
+            {
+              "titulo": "AWS Cloud Practitioner",
+              "url": "https://www.aws.training/Details/Curriculum?id=20685",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Fundamentals",
+              "url": "https://learn.microsoft.com/en-us/certifications/azure-fundamentals/",
+              "completado": false
+            },
+            {
+              "titulo": "Google Cloud Basics",
+              "url": "https://cloud.google.com/training/cloud-infrastructure",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Introducción a Programación",
+          "descripcion": "Lógica de programación",
+          "subcursos": [
+            {
+              "titulo": "CS50 Introduction to Programming",
+              "url": "https://cs50.harvard.edu/x/",
+              "completado": false
+            },
+            {
+              "titulo": "FreeCodeCamp Basics",
+              "url": "https://www.freecodecamp.org/learn/",
+              "completado": false
+            },
+            {
+              "titulo": "Clean Code",
+              "url": "https://www.oreilly.com/library/view/clean-code/9780136083238/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Cloud Practitioner",
+          "descripcion": "Certificación básica cloud",
+          "subcursos": [
+            {
+              "titulo": "AWS Certified Cloud Practitioner",
+              "url": "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Fundamentals AZ-900",
+              "url": "https://learn.microsoft.com/en-us/certifications/exams/az-900/",
+              "completado": false
+            },
+            {
+              "titulo": "Multi-Cloud Essentials",
+              "url": "https://www.coursera.org/learn/multicloud-computing",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Agile & Scrum",
+          "descripcion": "Metodologías ágiles",
+          "subcursos": [
+            {
+              "titulo": "Certified ScrumMaster (CSM)",
+              "url": "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster",
+              "completado": false
+            },
+            {
+              "titulo": "Agile Project Management",
+              "url": "https://www.coursera.org/specializations/agile-project-management",
+              "completado": false
+            },
+            {
+              "titulo": "Scrum Guide",
+              "url": "https://scrumguides.org/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Cloud Architect",
+          "descripcion": "Arquitectura en la nube",
+          "subcursos": [
+            {
+              "titulo": "AWS Solutions Architect",
+              "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate/",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Solutions Architect",
+              "url": "https://learn.microsoft.com/en-us/certifications/azure-solutions-architect/",
+              "completado": false
+            },
+            {
+              "titulo": "Cloud Architecture Patterns",
+              "url": "https://www.coursera.org/learn/cloud-architecture",
+              "completado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "Analista",
+      "cursos": [
+        {
+          "titulo": "Fundamentos IT",
+          "descripcion": "Conceptos básicos de tecnología",
+          "subcursos": [
+            {
+              "titulo": "CompTIA IT Fundamentals",
+              "url": "https://www.comptia.org/certifications/itf",
+              "completado": true
+            },
+            {
+              "titulo": "Introducción a las TI",
+              "url": "https://www.coursera.org/learn/tecnologias-informacion",
+              "completado": true
+            },
+            {
+              "titulo": "IT Essentials Companion Guide",
+              "url": "https://www.ciscopress.com/store/it-essentials-companion-guide-9781587132636",
+              "completado": true
+            }
+          ]
+        },
+        {
+          "titulo": "Bases de Datos Básicas",
+          "descripcion": "SQL básico",
+          "subcursos": [
+            {
+              "titulo": "SQL Fundamentals",
+              "url": "https://www.coursera.org/learn/sql-for-data-science",
+              "completado": false
+            },
+            {
+              "titulo": "W3Schools SQL Tutorial",
+              "url": "https://www.w3schools.com/sql/",
+              "completado": false
+            },
+            {
+              "titulo": "Oracle Database SQL Certified",
+              "url": "https://education.oracle.com/oracle-database-sql-certified-associate/trackp_457",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Análisis de Datos",
+          "descripcion": "Excel, Power BI",
+          "subcursos": [
+            {
+              "titulo": "Microsoft Power BI Fundamentals",
+              "url": "https://learn.microsoft.com/en-us/training/paths/get-started-power-bi/",
+              "completado": false
+            },
+            {
+              "titulo": "Excel Data Analysis",
+              "url": "https://www.coursera.org/learn/excel-data-analysis",
+              "completado": false
+            },
+            {
+              "titulo": "Microsoft Certified: Data Analyst",
+              "url": "https://learn.microsoft.com/en-us/certifications/data-analyst-associate/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Python Developer",
+          "descripcion": "Desarrollo en Python",
+          "subcursos": [
+            {
+              "titulo": "Python for Everybody",
+              "url": "https://www.coursera.org/specializations/python",
+              "completado": false
+            },
+            {
+              "titulo": "Real Python Tutorials",
+              "url": "https://realpython.com/",
+              "completado": false
+            },
+            {
+              "titulo": "Python Institute PCEP",
+              "url": "https://pythoninstitute.org/pcep",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "IA Fundamentals",
+          "descripcion": "Conceptos básicos de IA",
+          "subcursos": [
+            {
+              "titulo": "AI for Everyone",
+              "url": "https://www.coursera.org/learn/ai-for-everyone",
+              "completado": false
+            },
+            {
+              "titulo": "Microsoft AI Fundamentals",
+              "url": "https://learn.microsoft.com/en-us/certifications/ai-fundamentals/",
+              "completado": false
+            },
+            {
+              "titulo": "Machine Learning Crash Course",
+              "url": "https://developers.google.com/machine-learning/crash-course",
+              "completado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "Trainer",
+      "cursos": [
+        {
+          "titulo": "Fundamentos IT",
+          "descripcion": "Conceptos básicos de tecnología",
+          "subcursos": [
+            {
+              "titulo": "CompTIA IT Fundamentals",
+              "url": "https://www.comptia.org/certifications/itf",
+              "completado": true
+            },
+            {
+              "titulo": "Introducción a las TI",
+              "url": "https://www.coursera.org/learn/tecnologias-informacion",
+              "completado": true
+            },
+            {
+              "titulo": "IT Essentials Companion Guide",
+              "url": "https://www.ciscopress.com/store/it-essentials-companion-guide-9781587132636",
+              "completado": true
+            }
+          ]
+        },
+        {
+          "titulo": "Introducción Cloud",
+          "descripcion": "Conceptos de nube",
+          "subcursos": [
+            {
+              "titulo": "AWS Cloud Practitioner",
+              "url": "https://www.aws.training/Details/Curriculum?id=20685",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Fundamentals",
+              "url": "https://learn.microsoft.com/en-us/certifications/azure-fundamentals/",
+              "completado": false
+            },
+            {
+              "titulo": "Google Cloud Basics",
+              "url": "https://cloud.google.com/training/cloud-infrastructure",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Introducción a Programación",
+          "descripcion": "Lógica de programación",
+          "subcursos": [
+            {
+              "titulo": "CS50 Introduction to Programming",
+              "url": "https://cs50.harvard.edu/x/",
+              "completado": false
+            },
+            {
+              "titulo": "FreeCodeCamp Basics",
+              "url": "https://www.freecodecamp.org/learn/",
+              "completado": false
+            },
+            {
+              "titulo": "Clean Code",
+              "url": "https://www.oreilly.com/library/view/clean-code/9780136083238/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Cloud Practitioner",
+          "descripcion": "Certificación básica cloud",
+          "subcursos": [
+            {
+              "titulo": "AWS Certified Cloud Practitioner",
+              "url": "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+              "completado": false
+            },
+            {
+              "titulo": "Azure Fundamentals AZ-900",
+              "url": "https://learn.microsoft.com/en-us/certifications/exams/az-900/",
+              "completado": false
+            },
+            {
+              "titulo": "Multi-Cloud Essentials",
+              "url": "https://www.coursera.org/learn/multicloud-computing",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "IA Fundamentals",
+          "descripcion": "Conceptos básicos de IA",
+          "subcursos": [
+            {
+              "titulo": "AI for Everyone",
+              "url": "https://www.coursera.org/learn/ai-for-everyone",
+              "completado": false
+            },
+            {
+              "titulo": "Microsoft AI Fundamentals",
+              "url": "https://learn.microsoft.com/en-us/certifications/ai-fundamentals/",
+              "completado": false
+            },
+            {
+              "titulo": "Machine Learning Crash Course",
+              "url": "https://developers.google.com/machine-learning/crash-course",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "Agile & Scrum",
+          "descripcion": "Metodologías ágiles",
+          "subcursos": [
+            {
+              "titulo": "Certified ScrumMaster (CSM)",
+              "url": "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster",
+              "completado": false
+            },
+            {
+              "titulo": "Agile Project Management",
+              "url": "https://www.coursera.org/specializations/agile-project-management",
+              "completado": false
+            },
+            {
+              "titulo": "Scrum Guide",
+              "url": "https://scrumguides.org/",
+              "completado": false
+            }
+          ]
+        },
+        {
+          "titulo": "DevOps Engineer",
+          "descripcion": "CI/CD, automatización",
+          "subcursos": [
+            {
+              "titulo": "DevOps Engineering Fundamentals",
+              "url": "https://www.edx.org/learn/devops",
+              "completado": false
+            },
+            {
+              "titulo": "Docker & Kubernetes",
+              "url": "https://www.coursera.org/specializations/docker-kubernetes",
+              "completado": false
+            },
+            {
+              "titulo": "AWS DevOps Engineer",
+              "url": "https://aws.amazon.com/certification/certified-devops-engineer-professional/",
+              "completado": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

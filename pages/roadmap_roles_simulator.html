@@ -291,7 +291,71 @@
         };
 
         let currentRole = 'all';
+        let userProgress = {};
+        let completedResources = {};
         let completedBadges = [];
+
+        // Cargar progreso inicial desde archivo externo (progreso.json)
+        fetch('progreso.json')
+            .then(response => response.json())
+            .then(data => {
+                // Mapear el JSON externo a la estructura interna de userProgress
+                // Recorremos roles, cursos y subcursos
+                if (data && Array.isArray(data.roles)) {
+                    data.roles.forEach(role => {
+                        if (role.cursos) {
+                            role.cursos.forEach(curso => {
+                                // Buscar el badge correspondiente por nombre
+                                let badgeData = null;
+                                for (const l in badges) {
+                                    badgeData = badges[l].find(b => b.name === curso.titulo);
+                                    if (badgeData) break;
+                                }
+                                if (badgeData && curso.subcursos) {
+                                    curso.subcursos.forEach((subcurso, idx) => {
+                                        if (subcurso.completado) {
+                                            if (!userProgress[badgeData.id]) userProgress[badgeData.id] = [];
+                                            if (!userProgress[badgeData.id].includes(idx)) userProgress[badgeData.id].push(idx);
+                                            if (!completedResources[badgeData.id]) completedResources[badgeData.id] = [];
+                                            if (!completedResources[badgeData.id].includes(idx)) completedResources[badgeData.id].push(idx);
+                                        }
+                                    });
+                                    // Si todos los recursos están completos, marcar el badge
+                                    if (badgeData.resources && badgeData.resources.length > 0 &&
+                                        (userProgress[badgeData.id] || []).length === badgeData.resources.length) {
+                                        if (!completedBadges.includes(badgeData.id)) completedBadges.push(badgeData.id);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+                renderRoleInfo();
+                renderRoadmap();
+                renderUserProgressJSON();
+            })
+            .catch(err => {
+                console.warn('No se pudo cargar progreso.json:', err);
+                renderRoleInfo();
+                renderRoadmap();
+                renderUserProgressJSON();
+            });
+
+        function getAllBadgeIdsForRole(roleKey) {
+            // Devuelve solo los badge IDs que existen realmente en badges
+            const role = roles[roleKey];
+            if (!role) return [];
+            const allBadgeIds = Object.values(role.requirements).flat();
+            const validBadgeIds = [];
+            for (const level in badges) {
+                for (const badge of badges[level]) {
+                    if (allBadgeIds.includes(badge.id)) {
+                        validBadgeIds.push(badge.id);
+                    }
+                }
+            }
+            return validBadgeIds;
+        }
 
         function renderRoleInfo() {
             const roleInfoEl = document.getElementById('role-info');
@@ -301,11 +365,10 @@
                     <p>Explora los diferentes caminos de crecimiento profesional en tecnología. Cada rol tiene un roadmap específico con badges requeridos según el nivel de experiencia.</p>
                 `;
             } else {
+                const validBadgeIds = getAllBadgeIdsForRole(currentRole);
+                const completedCount = validBadgeIds.filter(b => completedBadges.includes(b)).length;
+                const progress = (completedCount / validBadgeIds.length) * 100;
                 const role = roles[currentRole];
-                const totalBadges = Object.values(role.requirements).flat().length;
-                const completedCount = Object.values(role.requirements).flat().filter(b => completedBadges.includes(b)).length;
-                const progress = (completedCount / totalBadges) * 100;
-                
                 roleInfoEl.innerHTML = `
                     <h3>👨‍💼 ${role.name}</h3>
                     <p>${role.description}</p>
@@ -313,7 +376,7 @@
                         <div class="progress-fill" style="width: ${progress}%"></div>
                     </div>
                     <div class="stats">
-                        <span>Progreso: ${completedCount}/${totalBadges} badges</span>
+                        <span>Progreso: ${completedCount}/${validBadgeIds.length} badges</span>
                         <span>${Math.round(progress)}% completado</span>
                     </div>
                 `;
@@ -329,66 +392,60 @@
                 professional: 'Profesional',
                 expert: 'Experto'
             };
-            
             grid.innerHTML = '';
-            
             levels.forEach(level => {
                 const levelCard = document.createElement('div');
                 levelCard.className = 'level-card';
-                
-                const relevantBadges = currentRole === 'all' 
-                    ? badges[level] 
-                    : badges[level].filter(badge => 
-                        currentRole === 'all' || 
-                        (roles[currentRole] && roles[currentRole].requirements[level]?.includes(badge.id))
-                    );
-                
-                if (relevantBadges.length === 0 && currentRole !== 'all') return;
-                
+                let relevantBadges = [];
+                if (currentRole === 'all') {
+                    relevantBadges = badges[level];
+                } else if (roles[currentRole] && roles[currentRole].requirements[level]) {
+                    const requiredIds = roles[currentRole].requirements[level];
+                    relevantBadges = badges[level].filter(badge => requiredIds.includes(badge.id));
+                }
+                if (relevantBadges.length === 0) return;
                 levelCard.innerHTML = `
                     <div class="level-title">
                         <div class="level-icon ${level}">${level.charAt(0).toUpperCase()}</div>
                         ${levelNames[level]}
                     </div>
                     <div class="badges-grid">
-                        ${relevantBadges.map(badge => `
-                            <div class="badge ${completedBadges.includes(badge.id) ? 'completed' : ''} ${
-                                currentRole !== 'all' && roles[currentRole]?.requirements[level]?.includes(badge.id) ? 'required' : ''
-                            }" data-badge="${badge.id}" title="${badge.description}">
-                                <div class="badge-icon ${badge.category}">
-                                    ${getBadgeIcon(badge.category)}
+                        ${relevantBadges.map(badge => {
+                            const allResources = badge.resources || [];
+                            const completedForBadge = completedResources[badge.id] || [];
+                            const allDone = allResources.length > 0 && completedForBadge.length === allResources.length;
+                            if (allDone && !completedBadges.includes(badge.id)) completedBadges.push(badge.id);
+                            if (!allDone && completedBadges.includes(badge.id)) completedBadges = completedBadges.filter(b => b !== badge.id);
+                            return `
+                                <div class="badge ${allDone ? 'completed' : ''} ${allDone ? 'badge-green' : ''} ${
+                                    currentRole !== 'all' && roles[currentRole]?.requirements[level]?.includes(badge.id) ? 'required' : ''
+                                }" data-badge="${badge.id}" title="${badge.description}">
+                                    <div class="badge-icon ${badge.category}">
+                                        ${getBadgeIcon(badge.category)}
+                                    </div>
+                                    <div class="badge-name">${badge.name}</div>
                                 </div>
-                                <div class="badge-name">${badge.name}</div>
-                            </div>
-                        `).join('')}
+                            `;
+                        }).join('')}
                     </div>
                 `;
-                
                 grid.appendChild(levelCard);
             });
-            
-            // Agregar event listeners para los badges
-            document.querySelectorAll('.badge').forEach(badge => {
-                badge.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const badgeId = this.dataset.badge;
-                    
-                    // Si es click derecho o con Ctrl, toggle badge
-                    if (e.ctrlKey || e.metaKey || e.button === 2) {
-                        toggleBadge(badgeId);
-                    } else {
-                        // Click normal, mostrar modal
+            // Agregar event listeners para los badges DESPUÉS de agregar los elementos al DOM
+            setTimeout(() => {
+                document.querySelectorAll('.badge').forEach(badge => {
+                    badge.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const badgeId = this.dataset.badge;
                         showBadgeModal(badgeId);
-                    }
+                    });
+                    badge.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                        const badgeId = this.dataset.badge;
+                        toggleBadge(badgeId);
+                    });
                 });
-                
-                // Agregar menú contextual
-                badge.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    const badgeId = this.dataset.badge;
-                    toggleBadge(badgeId);
-                });
-            });
+            }, 0);
         }
 
         function getBadgeIcon(category) {
@@ -400,6 +457,17 @@
                 dev: '💻'
             };
             return icons[category] || '🎯';
+        }
+
+        function getResourceIcon(type) {
+            const icons = {
+                course: '📘',
+                tutorial: '📝',
+                documentation: '📄',
+                certification: '🏅',
+                book: '📚'
+            };
+            return icons[type] || '🔗';
         }
 
         function showBadgeModal(badgeId) {
@@ -424,81 +492,119 @@
             modalTitle.textContent = badgeData.name;
             modalDescription.textContent = badgeData.description;
             
-            // Generar recursos
-            resourceList.innerHTML = badgeData.resources ? badgeData.resources.map(resource => `
-                <a href="${resource.url}" class="resource-item" target="_blank" rel="noopener noreferrer">
-                    <div class="resource-icon ${resource.type}">
-                        ${getResourceIcon(resource.type)}
+            // Generar recursos con botón para marcar como listo
+            resourceList.innerHTML = badgeData.resources ? badgeData.resources.map((resource, idx) => {
+                const isUserDone = (userProgress[badgeId] || []).includes(idx);
+                return `
+                    <div class="resource-item">
+                        <a href="${resource.url}" target="_blank" rel="noopener noreferrer">
+                            <div class="resource-icon ${resource.type}">
+                                ${getResourceIcon(resource.type)}
+                            </div>
+                            <div class="resource-info">
+                                <div class="resource-title">${resource.title}</div>
+                                <div class="resource-description">${resource.description}</div>
+                            </div>
+                        </a>
+                        <button class="mark-done${isUserDone ? ' completed' : ''}" data-badge="${badgeId}" data-index="${idx}">
+                            ${isUserDone ? '<span class="checkmark">✔</span> Completado' : 'Marcar como completado'}
+                        </button>
                     </div>
-                    <div class="resource-info">
-                        <div class="resource-title">${resource.title}</div>
-                        <div class="resource-description">${resource.description}</div>
-                        <div class="resource-url">${resource.url}</div>
-                    </div>
-                </a>
-            `).join('') : '<p>No hay recursos disponibles para este badge.</p>';
+                `;
+            }).join('') : '';
             
-            // Mostrar modal
+            // Listeners para los botones de recursos
+            setTimeout(() => {
+                document.querySelectorAll('.mark-done').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        const badgeId = this.dataset.badge;
+                        const resourceIdx = parseInt(this.dataset.index);
+                        const isUserDone = (userProgress[badgeId] || []).includes(resourceIdx);
+                        updateUserProgress(badgeId, resourceIdx, !isUserDone);
+                        // También actualiza el sistema visual de recursos
+                        if (!completedResources[badgeId]) completedResources[badgeId] = [];
+                        if (!isUserDone) {
+                            completedResources[badgeId].push(resourceIdx);
+                        } else {
+                            completedResources[badgeId] = completedResources[badgeId].filter(i => i !== resourceIdx);
+                        }
+                        // Si todos los recursos están completos, marcar el badge
+                        const badge = Object.values(badges).flat().find(b => b.id === badgeId);
+                        if (badge && completedResources[badgeId].length === (badge.resources || []).length) {
+                            if (!completedBadges.includes(badgeId)) completedBadges.push(badgeId);
+                        } else {
+                            completedBadges = completedBadges.filter(b => b !== badgeId);
+                        }
+                        renderRoleInfo();
+                        renderRoadmap();
+                        showBadgeModal(badgeId); // Refrescar modal
+                    });
+                });
+            }, 100);
             modal.classList.add('show');
         }
 
-        function getResourceIcon(type) {
-            const icons = {
-                course: '🎓',
-                documentation: '📖',
-                certification: '🏆',
-                tutorial: '💡',
-                book: '📚'
-            };
-            return icons[type] || '📄';
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('badgeModal');
-            modal.classList.remove('show');
-        }
-
-        function toggleBadge(badgeId) {
-            const index = completedBadges.indexOf(badgeId);
-            if (index > -1) {
-                completedBadges.splice(index, 1);
+        function updateUserProgress(badgeId, resourceIdx, isDone) {
+            if (!userProgress[badgeId]) userProgress[badgeId] = [];
+            if (isDone) {
+                if (!userProgress[badgeId].includes(resourceIdx)) userProgress[badgeId].push(resourceIdx);
             } else {
-                completedBadges.push(badgeId);
+                userProgress[badgeId] = userProgress[badgeId].filter(i => i !== resourceIdx);
             }
-            renderRoleInfo();
-            renderRoadmap();
+            // Actualiza el JSON en pantalla
+            renderUserProgressJSON();
         }
 
-        // Event listeners
-        document.querySelectorAll('.role-selector').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.role-selector').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                currentRole = this.dataset.role;
-                renderRoleInfo();
-                renderRoadmap();
-            });
-        });
-
-        // Modal event listeners
-        document.getElementById('badgeModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
+        function renderUserProgressJSON() {
+            let jsonDiv = document.getElementById('userProgressJSON');
+            if (jsonDiv) {
+                jsonDiv.remove(); // Elimina el div si existe
             }
-        });
-
-        document.querySelector('.close-modal').addEventListener('click', closeModal);
-
-        // Cerrar modal con ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
+            // Ya no mostramos el JSON visualmente
+        }
 
         // Inicialización
+        function setupRoleSelectorListeners() {
+            document.querySelectorAll('.role-selector').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.role-selector').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentRole = this.dataset.role;
+                    renderRoleInfo();
+                    renderRoadmap();
+                    renderUserProgressJSON();
+                });
+            });
+        }
+
+        // Cerrar modal con el botón de cerrar y al hacer click fuera del modal
+        function setupModalClose() {
+            const modal = document.getElementById('badgeModal');
+            const closeBtn = document.querySelector('.close-modal');
+            if (closeBtn) {
+                closeBtn.onclick = function() {
+                    modal.classList.remove('show');
+                };
+            }
+            // Cerrar modal al hacer click fuera del contenido
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            };
+            // Cerrar modal con ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    modal.classList.remove('show');
+                }
+            });
+        }
+
         renderRoleInfo();
         renderRoadmap();
+        renderUserProgressJSON();
+        setupRoleSelectorListeners();
+        setupModalClose();
     </script>
 </body>
 </html>
