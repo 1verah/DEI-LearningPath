@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador de Archivos - Escritorio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .folders-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4facfe;
+        }
+        
+        .folders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .folder-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .folder-card:hover {
+            background: #4facfe;
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+        
+        .folder-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .folder-name {
+            font-weight: 600;
+            word-break: break-word;
+        }
+        
+        .tree-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .tree-item {
+            margin: 5px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .tree-folder {
+            color: #4facfe;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .tree-folder:hover {
+            background: #e3f2fd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .tree-file {
+            color: #666;
+            margin-left: 20px;
+        }
+        
+        .tree-size {
+            color: #999;
+            font-size: 0.9em;
+        }
+        
+        .tree-toggle {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .tree-children {
+            margin-left: 20px;
+            border-left: 1px dashed #ccc;
+            padding-left: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .depth-control {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #2196f3;
+        }
+        
+        .stats {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                margin: 2px 0;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗂️ Explorador de Archivos</h1>
+            <p>Explora las carpetas de tu escritorio en forma de árbol</p>
+        </div>
+        
+        <div class="content">
+            <div class="folders-section">
+                <h2 class="section-title">📁 Carpetas del Escritorio</h2>
+                <div id="desktop-path" style="margin-bottom: 15px; color: #666; font-style: italic;"></div>
+                <div id="folders-container" class="loading">
+                    Cargando carpetas del escritorio...
+                </div>
+            </div>
+            
+            <div id="tree-section" class="hidden">
+                <h2 class="section-title">🌳 Estructura de Archivos</h2>
+                <div class="controls">
+                    <label>Profundidad máxima:</label>
+                    <select id="depth-select" class="depth-control">
+                        <option value="2">2 niveles</option>
+                        <option value="3" selected>3 niveles</option>
+                        <option value="4">4 niveles</option>
+                        <option value="5">5 niveles</option>
+                    </select>
+                    <button id="refresh-btn" class="btn">🔄 Actualizar</button>
+                    <button id="expand-all-btn" class="btn">📂 Expandir Todo</button>
+                    <button id="collapse-all-btn" class="btn">📁 Colapsar Todo</button>
+                </div>
+                <div id="current-folder" style="margin-bottom: 15px; font-weight: bold; color: #4facfe;"></div>
+                <div id="stats-container"></div>
+                <div id="tree-container" class="tree-container">
+                    <div class="loading">Selecciona una carpeta para ver su estructura...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFolderPath = '';
+        let currentTreeData = null;
+
+        // Cargar carpetas del escritorio al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDesktopFolders();
+        });
+
+        async function loadDesktopFolders() {
+            try {
+                const response = await fetch('/api/desktop-folders');
+                const data = await response.json();
+                
+                const container = document.getElementById('folders-container');
+                const pathElement = document.getElementById('desktop-path');
+                
+                if (data.success) {
+                    pathElement.textContent = `📍 Ruta: ${data.desktop_path}`;
+                    
+                    if (data.folders.length === 0) {
+                        container.innerHTML = '<p style="text-align: center; color: #666;">No se encontraron carpetas en el escritorio</p>';
+                        return;
+                    }
+                    
+                    const foldersGrid = document.createElement('div');
+                    foldersGrid.className = 'folders-grid';
+                    
+                    data.folders.forEach(folder => {
+                        const folderCard = document.createElement('div');
+                        folderCard.className = 'folder-card';
+                        folderCard.innerHTML = `
+                            <div class="folder-icon">📁</div>
+                            <div class="folder-name">${folder.name}</div>
+                        `;
+                        folderCard.addEventListener('click', () => loadFolderTree(folder.path, folder.name));
+                        foldersGrid.appendChild(folderCard);
+                    });
+                    
+                    container.innerHTML = '';
+                    container.appendChild(foldersGrid);
+                } else {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('folders-container').innerHTML =
+                    `<div class="error">Error de conexión: ${error.message}</div>`;
+            }
+        }
+
+        async function loadFolderTree(folderPath, folderName) {
+            currentFolderPath = folderPath;
+            const treeSection = document.getElementById('tree-section');
+            const currentFolder = document.getElementById('current-folder');
+            const treeContainer = document.getElementById('tree-container');
+            const depthSelect = document.getElementById('depth-select');
+            
+            treeSection.classList.remove('hidden');
+            currentFolder.textContent = `📂 ${folderName}`;
+            treeContainer.innerHTML = '<div class="loading">Cargando estructura de archivos...</div>';
+            
+            try {
+                const depth = depthSelect.value;
+                const response = await fetch(`/api/folder-tree?path=${encodeURIComponent(folderPath)}&depth=${depth}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.tree && data.tree.length > 0) {
+                        currentTreeData = data.tree;
+                        treeContainer.innerHTML = '';
+                        renderTree(data.tree, treeContainer);
+                        showStats(data.tree);
+                    } else {
+                        treeContainer.innerHTML = '<p style="text-align: center; color: #666;">La carpeta está vacía o no se pudo acceder</p>';
+                        document.getElementById('stats-container').innerHTML = '';
+                    }
+                } else {
+                    treeContainer.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                treeContainer.innerHTML = `<div class="error">Error de conexión: ${error.message}</div>`;
+            }
+        }
+
+        function renderTree(items, container, level = 0) {
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'tree-item';
+                
+                if (item.is_dir) {
+                    const hasChildren = item.children && item.children.length > 0;
+                    const toggleIcon = hasChildren ? '📁' : '📂';
+                    const toggleSymbol = hasChildren ? '▼' : '';
+                    
+                    itemDiv.innerHTML = `
+                        <span class="tree-toggle">${toggleSymbol}</span>
+                        <span class="tree-folder">${toggleIcon} ${item.name}</span>
+                    `;
+                    
+                    if (hasChildren) {
+                        const childrenDiv = document.createElement('div');
+                        childrenDiv.className = 'tree-children';
+                        renderTree(item.children, childrenDiv, level + 1);
+                        itemDiv.appendChild(childrenDiv);
+                        
+                        // Agregar funcionalidad de toggle
+                        const toggle = itemDiv.querySelector('.tree-toggle');
+                        const folder = itemDiv.querySelector('.tree-folder');
+                        
+                        [toggle, folder].forEach(element => {
+                            element.addEventListener('click', () => {
+                                const isHidden = childrenDiv.classList.contains('hidden');
+                                childrenDiv.classList.toggle('hidden');
+                                toggle.textContent = isHidden ? '▼' : '▶';
+                            });
+                        });
+                    }
+                } else {
+                    const fileIcon = getFileIcon(item.name);
+                    const sizeText = item.size ? ` (${item.size})` : '';
+                    itemDiv.innerHTML = `
+                        <span class="tree-toggle"></span>
+                        <span class="tree-file">${fileIcon} ${item.name}<span class="tree-size">${sizeText}</span></span>
+                    `;
+                }
+                
+                container.appendChild(itemDiv);
+            });
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const iconMap = {
+                'txt': '📄', 'doc': '📄', 'docx': '📄', 'pdf': '📕',
+                'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'bmp': '🖼️', 'svg': '🖼️',
+                'mp3': '🎵', 'wav': '🎵', 'flac': '🎵', 'mp4': '🎬', 'avi': '🎬', 'mov': '🎬', 'mkv': '🎬',
+                'zip': '📦', 'rar': '📦', '7z': '📦', 'tar': '📦', 'gz': '📦',
+                'exe': '⚙️', 'msi': '⚙️', 'deb': '⚙️', 'rpm': '⚙️',
+                'html': '🌐', 'htm': '🌐', 'css': '🎨', 'js': '📜', 'py': '🐍', 'java': '☕',
+                'xlsx': '📊', 'xls': '📊', 'csv': '📊', 'json': '📋', 'xml': '📋',
+                'ppt': '📊', 'pptx': '📊', 'md': '📝', 'readme': '📖'
+            };
+            return iconMap[ext] || '📄';
+        }
+
+        function showStats(tree) {
+            const stats = calculateStats(tree);
+            const statsContainer = document.getElementById('stats-container');
+            
+            statsContainer.innerHTML = `
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number">${stats.folders}</div>
+                        <div class="stat-label">Carpetas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${stats.files}</div>
+                        <div class="stat-label">Archivos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${stats.totalSize}</div>
+                        <div class="stat-label">Tamaño Total</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function calculateStats(tree) {
+            let folders = 0;
+            let files = 0;
+            let totalBytes = 0;
+
+            function traverse(items) {
+                items.forEach(item => {
+                    if (item.is_dir) {
+                        folders++;
+                        if (item.children) {
+                            traverse(item.children);
+                        }
+                    } else {
+                        files++;
+                        // Extraer bytes del tamaño si está disponible
+                        if (item.size && item.size !== 'N/A') {
+                            const sizeMatch = item.size.match(/([0-9.]+)\s*([KMGT]?B)/);
+                            if (sizeMatch) {
+                                const value = parseFloat(sizeMatch[1]);
+                                const unit = sizeMatch[2];
+                                const multipliers = {'B': 1, 'KB': 1024, 'MB': 1024*1024, 'GB': 1024*1024*1024, 'TB': 1024*1024*1024*1024};
+                                totalBytes += value * (multipliers[unit] || 1);
+                            }
+                        }
+                    }
+                });
+            }
+
+            traverse(tree);
+            
+            return {
+                folders,
+                files,
+                totalSize: formatFileSize(totalBytes)
+            };
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function expandAll() {
+            const toggles = document.querySelectorAll('.tree-toggle');
+            const children = document.querySelectorAll('.tree-children');
+            
+            toggles.forEach(toggle => {
+                if (toggle.textContent === '▶') {
+                    toggle.textContent = '▼';
+                }
+            });
+            
+            children.forEach(child => {
+                child.classList.remove('hidden');
+            });
+        }
+
+        function collapseAll() {
+            const toggles = document.querySelectorAll('.tree-toggle');
+            const children = document.querySelectorAll('.tree-children');
+            
+            toggles.forEach(toggle => {
+                if (toggle.textContent === '▼') {
+                    toggle.textContent = '▶';
+                }
+            });
+            
+            children.forEach(child => {
+                child.classList.add('hidden');
+            });
+        }
+
+        // Event listeners
+        document.getElementById('refresh-btn').addEventListener('click', () => {
+            if (currentFolderPath) {
+                const folderName = currentFolderPath.split(/[/\\]/).pop();
+                loadFolderTree(currentFolderPath, folderName);
+            }
+        });
+
+        document.getElementById('expand-all-btn').addEventListener('click', expandAll);
+        document.getElementById('collapse-all-btn').addEventListener('click', collapseAll);
+
+        document.getElementById('depth-select').addEventListener('change', () => {
+            if (currentFolderPath) {
+                const folderName = currentFolderPath.split(/[/\\]/).pop();
+                loadFolderTree(currentFolderPath, folderName);
+            }
+        });
+    </script>
+</body>
+</html>
